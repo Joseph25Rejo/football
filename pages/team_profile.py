@@ -60,6 +60,8 @@ record = data.club_record(team)
 # --- Who they were ---------------------------------------------------------
 
 st.header(team)
+if st.button("Scout this club", icon=":material/groups:", key="to_club_scouting"):
+    routing.go(routing.CLUB_SCOUTING, **{routing.TEAM: team})
 
 col1, col2, col3, col4, col5 = st.columns(5)
 col1.metric("Final position", f"{record['position']}", border=True)

@@ -22,6 +22,9 @@ TEAM_PROFILE = "pages/team_profile.py"
 TEAM_STYLE_MAP = "pages/team_style_map.py"
 MATCHES = "pages/matches.py"
 METHODOLOGY = "pages/methodology.py"
+SCOUT_SEARCH = "pages/scout_search.py"
+SHORTLIST = "pages/shortlist.py"
+CLUB_SCOUTING = "pages/club_scouting.py"
 
 # Streamlit serves a page at its filename without the folder or the extension.
 # `st.switch_page` wants the path above; a link inside a table needs this. They

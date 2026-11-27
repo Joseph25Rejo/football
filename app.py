@@ -37,6 +37,14 @@ PAGES = {
         st.Page(routing.PLAYER_COMPARISON, title="Compare two players",
                 icon=":material/compare_arrows:"),
     ],
+    "Scouting": [
+        st.Page(routing.CLUB_SCOUTING, title="Club scouting",
+                icon=":material/groups:"),
+        st.Page(routing.SCOUT_SEARCH, title="Scout players",
+                icon=":material/radar:"),
+        st.Page(routing.SHORTLIST, title="Shortlist & notes",
+                icon=":material/bookmark:"),
+    ],
     "Clubs": [
         st.Page(routing.TEAM_PROFILE, title="Club profile", icon=":material/shield:"),
         st.Page(routing.TEAM_STYLE_MAP, title="Style map", icon=":material/scatter_plot:"),

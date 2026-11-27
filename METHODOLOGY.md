@@ -240,3 +240,51 @@ that season.
 - **One season, one league.** No cross-competition validation is possible here, so
   the labels describe this population and should not be assumed to transfer.
 - **Clusters are descriptive.** They say how teams played, not how well.
+
+## Module C — Club Scouting
+
+Built on the player marts and the style model; it adds no new data. Every figure is
+descriptive and every threshold lives in `artifacts/feature_config.yml`
+(`club_diagnosis`, `scouting_profiles`, `team_weakness_targets`).
+
+### 1. Player rating
+A player's **rating** is the weighted mean of their within-role percentiles on that
+role's `role_features`, scaled 0-100 (the same weights the similarity engine uses).
+Metrics where a high value only describes a player (turnovers, share of actions under
+pressure; `NOT_A_DISTINCTION` in `src/app/labels.py`) are excluded, because a
+top-percentile turnover rate is not a strength. A player needs 70% feature coverage
+to be rated.
+
+### 2. Strong and thin positions
+For each role the **first-choice unit** is the top N players by minutes (CB 2, FB 2,
+CM 3, AM_W 3, ST 1). The unit rating is their minutes-weighted mean rating, ranked
+against the same role at the other clubs. Top third is **Strong**, bottom third
+**Weak**, the rest **Average**. A role is **Thin** when fewer than one reserve beyond
+the starters has played 900 minutes. The page shows the weakest starter beside the
+average, because one star can hide a poor partner.
+
+### 3. Weak statistics
+A club is ranked on 13 team metrics that have a defensible direction of *better*
+(`team_metric_direction`), so rank 1 is always the best club whether the metric is
+better high (pass completion) or low (PPDA, turnovers). Style choices such as width,
+long-ball share, switching, set-piece share and possession are never judged.
+
+### 4. Targets
+Candidates are players at other clubs with enough minutes. **Fill a position** ranks
+them by role rating or by a named profile (a weighted list of metrics, scored as a
+weighted mean percentile) and shows each against the club's weakest starter. **Fix a
+weak statistic** maps a weak team metric to the roles and player metrics that address
+it (`team_weakness_targets`). That mapping is analytical judgement, not a proven
+causal link, and the page says so.
+
+### 5. Limitations
+- **Style bias.** Ratings reward volume of passing, progression and defensive
+  actions, so low-possession sides rate low in a role while winning matches.
+  Leicester's title-winning centre-backs and full-backs rank near the bottom.
+  **Weak** means *thin on these statistics*, not *bad*.
+- **One league, one season.** Targets are 2015/16 Premier League players only.
+- **No price, age, contract or availability data** in the source.
+- **Goalkeepers are excluded** from the pipeline, so there is no goalkeeper analysis.
+- **Small league.** Ranks out of 20 are a coarse signal.
+- **Shortlists and notes** are the user's own and are stored separately in
+  `data/scouting.duckdb`, never in the analytical database.

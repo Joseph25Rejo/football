@@ -173,6 +173,18 @@ weights second.
 - **One season is one season.** Nothing here distinguishes a player's stable
   style from a single unusual campaign.
 
+### Club scouting layer
+
+- **Ratings carry the same style bias, more visibly.** A club rating averages
+  percentiles that reward passing, progression and defensive volume, so a
+  low-possession side ranks low in a role while winning matches (Leicester's
+  2015/16 back line is the clearest case). A "Weak" verdict means thin on these
+  statistics, not poor.
+- **Gap-to-target mappings are judgement.** Which roles and player metrics address a
+  weak team statistic is set in config and is not a causal claim.
+- **Candidates are one league, one season.** No price, age or availability data, so a
+  high score is not a recommendation to sign anyone.
+
 ## Fairness and ethical considerations
 
 The subjects are professional footballers and the outputs concern their

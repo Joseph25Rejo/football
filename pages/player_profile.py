@@ -15,6 +15,7 @@ import streamlit as st
 
 from src.app import charts, data, routing
 from src.app.labels import format_value, pretty
+from src.app.scouting_ui import shortlist_button
 from src.similarity.engine import find_similar
 
 RING_COUNT = 12
@@ -254,5 +255,8 @@ else:
                    routing.COMPARE_RIGHT: int(candidate["player_id"])},
             )
 
-if st.button("Full similarity search", icon=":material/search:", key="to_search"):
+action_columns = st.columns([2, 2, 4])
+if action_columns[0].button("Full similarity search", icon=":material/search:", key="to_search"):
     routing.go(routing.PLAYER_SEARCH, **{routing.PLAYER: player_id})
+with action_columns[1]:
+    shortlist_button(player_id, key="profile_shortlist")

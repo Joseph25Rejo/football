@@ -3,6 +3,7 @@
 import streamlit as st
 
 from src.app import data, routing
+from src.app.scouting_ui import shortlist_button
 from src.similarity.engine import find_similar
 
 st.title(":material/search: Find similar players")
@@ -110,7 +111,7 @@ st.divider()
 st.subheader("Open a result")
 
 for _, candidate in table.iterrows():
-    columns = st.columns([3, 2, 1, 1])
+    columns = st.columns([3, 2, 1, 1, 1.4])
     columns[0].markdown(f"**{candidate['display_name']}** · {candidate['team']}")
     columns[1].markdown(f"similarity **{candidate['similarity']:.3f}**")
     if columns[2].button("Profile", key=f"open_profile_{candidate['player_id']}"):
@@ -122,3 +123,5 @@ for _, candidate in table.iterrows():
             **{routing.COMPARE_LEFT: player_id,
                routing.COMPARE_RIGHT: int(candidate["player_id"])},
         )
+    with columns[4]:
+        shortlist_button(int(candidate["player_id"]), key=f"open_short_{candidate['player_id']}")

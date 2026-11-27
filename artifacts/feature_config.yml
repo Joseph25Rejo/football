@@ -191,3 +191,125 @@ role_features:
     padj_pressures_p90: 1.2
     pressured_actions_share: 1.0
     turnovers_p90: 0.8
+
+# Scouting target profiles: weighted metrics scored as a within-role percentile
+# average (0-100). Metrics must be columns of mart_player_season. These describe
+# a playing style to look for; they do not say a player is good or will fit.
+scouting_profiles:
+  CB:
+    ball_playing_cb:
+      label: Ball-playing centre-back
+      metrics: {prog_passes_p90: 2.0, forward_pass_share: 1.5, pass_completion_pct: 1.0, prog_carries_p90: 1.5, long_pass_share: 1.0}
+    stopper_cb:
+      label: Aggressive stopper
+      metrics: {padj_tackles_p90: 2.0, padj_interceptions_p90: 1.0, def_action_height: 1.5, aerial_win_pct: 1.5, padj_pressures_p90: 1.0}
+  FB:
+    attacking_fb:
+      label: Attacking full-back
+      metrics: {crosses_box_p90: 2.0, prog_carries_p90: 2.0, final_third_entries_p90: 1.5, box_entries_p90: 1.5, key_passes_p90: 1.0}
+    defensive_fb:
+      label: Defensive full-back
+      metrics: {padj_tackles_p90: 2.0, padj_interceptions_p90: 1.5, recoveries_p90: 1.0, aerial_win_pct: 1.0}
+  CM:
+    deep_playmaker:
+      label: Deep-lying playmaker
+      metrics: {prog_passes_p90: 2.0, pass_attempts_p90: 1.5, forward_pass_share: 1.5, long_pass_share: 1.0, pass_completion_pct: 1.0}
+    ball_winner:
+      label: Ball-winning midfielder
+      metrics: {padj_tackles_p90: 2.0, padj_interceptions_p90: 1.5, padj_pressures_p90: 1.5, recoveries_p90: 1.5}
+    box_to_box:
+      label: Box-to-box carrier
+      metrics: {prog_carries_p90: 2.0, final_third_entries_p90: 1.5, box_entries_p90: 1.0, padj_pressures_p90: 1.0, shots_p90: 0.5}
+  AM_W:
+    creator:
+      label: Chance creator
+      metrics: {key_passes_p90: 2.0, xg_assisted_p90: 2.0, through_balls_p90: 1.0, zone14_receptions_p90: 1.0}
+    dribbler:
+      label: Dribbling winger
+      metrics: {prog_carries_p90: 2.0, dribble_success_pct: 1.5, box_entries_p90: 1.5, wide_touch_share: 1.0}
+    inside_forward:
+      label: Goal-threat winger
+      metrics: {npxg_p90: 2.0, shots_p90: 1.5, box_shot_share: 1.0, halfspace_touch_share: 1.0}
+  ST:
+    poacher:
+      label: Penalty-box poacher
+      metrics: {npxg_p90: 2.0, box_shot_share: 2.0, shots_p90: 1.5, npxg_per_shot: 1.0}
+    target_man:
+      label: Target man
+      metrics: {aerial_involvement_p90: 2.0, aerial_win_pct: 2.0, npxg_p90: 1.0}
+    pressing_forward:
+      label: Pressing forward
+      metrics: {padj_pressures_p90: 2.0, prog_carries_p90: 1.0, key_passes_p90: 1.0, npxg_p90: 1.0}
+
+# Club diagnosis settings (descriptive; see METHODOLOGY.md).
+club_diagnosis:
+  # Players counted as the first-choice unit in each role (top N by minutes).
+  starters_per_role: {CB: 2, FB: 2, CM: 3, AM_W: 3, ST: 1}
+  # A reserve only counts as depth if they have played this many minutes.
+  depth_min_minutes: 900
+  strong_rank_share: 0.34    # top third of clubs -> Strong
+  weak_rank_share: 0.34      # bottom third of clubs -> Weak
+
+  # Team metrics where a direction of "better" is defensible, for the weak-stats
+  # view. Everything else in the style space (width, long-ball share, set-piece
+  # share, switching, counter shots, possession) is a *choice of style*, not a
+  # quality, so it is never called a weakness.
+  team_metric_direction:
+    pass_completion: high
+    pressured_pass_completion: high
+    turnovers_per_100_passes: low
+    own_half_loss_share: low
+    ppda: low                  # lower = presses harder
+    high_regain_share: high
+    final_third_entries_per_100_passes: high
+    prog_actions_per_100_passes: high
+    zone14_entries_per_100_passes: high
+    shots_per_100_passes: high
+    npxg_per_shot: high
+    box_shot_share: high
+    mean_shot_distance: low
+
+# Which roles and player metrics address a weak team metric. This is analytical
+# judgement, not an established causal link: a club that shoots rarely may need
+# better shooters, a better creator, or a different system. Used only to
+# suggest where to look. Player metrics are within-role percentiles, higher = better.
+team_weakness_targets:
+  shots_per_100_passes:
+    roles: [AM_W, ST]
+    player_metrics: [shots_p90, npxg_p90]
+  npxg_per_shot:
+    roles: [ST, AM_W]
+    player_metrics: [npxg_per_shot, box_shot_share]
+  box_shot_share:
+    roles: [ST, AM_W]
+    player_metrics: [box_shot_share, npxg_per_shot]
+  mean_shot_distance:
+    roles: [ST, AM_W]
+    player_metrics: [box_shot_share, npxg_per_shot]
+  prog_actions_per_100_passes:
+    roles: [CM, FB, AM_W]
+    player_metrics: [prog_passes_p90, prog_carries_p90]
+  final_third_entries_per_100_passes:
+    roles: [CM, FB, AM_W]
+    player_metrics: [final_third_entries_p90, prog_carries_p90]
+  zone14_entries_per_100_passes:
+    roles: [CM, AM_W]
+    player_metrics: [zone14_entries_p90, zone14_receptions_p90]
+  ppda:
+    roles: [CM, AM_W, ST]
+    player_metrics: [padj_pressures_p90]
+  high_regain_share:
+    roles: [CM, AM_W, ST]
+    player_metrics: [padj_pressures_p90, recoveries_p90]
+  turnovers_per_100_passes:
+    roles: [CM, FB, AM_W]
+    player_metrics: [pass_completion_pct, dribble_success_pct]
+  own_half_loss_share:
+    roles: [CB, FB, CM]
+    player_metrics: [pass_completion_pct]
+  pass_completion:
+    roles: [CB, FB, CM]
+    player_metrics: [pass_completion_pct, pass_attempts_p90]
+  pressured_pass_completion:
+    roles: [CB, CM]
+    player_metrics: [pass_completion_pct]

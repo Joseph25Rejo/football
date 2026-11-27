@@ -90,7 +90,7 @@ OVERRIDES: dict[str, str] = {
 NOT_A_DISTINCTION = {"turnovers_p90", "pressured_actions_share"}
 
 # Metrics expressed as a 0-1 share or rate, so the app knows to show a percentage.
-SHARE_LIKE_SUFFIXES = ("_share", "_pct")
+SHARE_LIKE_SUFFIXES = ("_share", "_pct", "_completion")
 
 
 def pretty(column: str) -> str:

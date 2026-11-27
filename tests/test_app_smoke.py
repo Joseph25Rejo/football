@@ -42,6 +42,9 @@ PAGES = [
     "pages/team_profile.py",
     "pages/matches.py",
     "pages/methodology.py",
+    "pages/scout_search.py",
+    "pages/club_scouting.py",
+    "pages/shortlist.py",
 ]
 
 TIMEOUT = 120
@@ -256,3 +259,33 @@ def test_committed_app_database_has_everything_the_app_reads():
         assert con.execute("SELECT count(*) FROM fact_lineups").fetchone()[0] > 0
     finally:
         con.close()
+
+
+def test_scout_search_filters_and_shortlists(tmp_path, monkeypatch):
+    """Pick a metric floor, shortlist the first result, see it on the shortlist page."""
+    from src.scouting import store
+
+    monkeypatch.setenv(store.STORE_PATH_ENV_VAR, str(tmp_path / "scouting.duckdb"))
+    app = _open("pages/scout_search.py")
+    app.multiselect[2].set_value(["prog_passes_p90"]).run()
+    _assert_clean(app)
+    shortlist_buttons = [b for b in app.button if (b.key or "").startswith("scout_short_")]
+    assert shortlist_buttons
+    shortlist_buttons[0].click().run()
+    assert len(store.shortlist()) == 1
+    app.switch_page(str(REPO_ROOT / "pages/shortlist.py")).run()
+    _assert_clean(app)
+
+
+def test_club_scouting_gap_to_shortlist(tmp_path, monkeypatch):
+    """Manchester United -> Targets tab -> shortlist the top candidate."""
+    from src.scouting import store
+
+    monkeypatch.setenv(store.STORE_PATH_ENV_VAR, str(tmp_path / "scouting.duckdb"))
+    app = _open("pages/club_scouting.py", team="Manchester United")
+    _assert_clean(app)
+    buttons = [b for b in app.button if (b.key or "").startswith("tg_short_")]
+    assert buttons, "the Targets tab should list shortlistable candidates"
+    buttons[0].click().run()
+    _assert_clean(app)
+    assert len(store.shortlist()) == 1
